@@ -1,0 +1,92 @@
+import numpy as np
+import random
+import csv 
+
+with open('iris-data.csv', 'r') as f:
+    reader = csv.reader(f)
+    input = list(reader)
+
+
+
+sigma0 = 10
+eta0 =0.1
+dsigma = 0.05
+deta= 0.01
+
+input = np.array(input)
+input= input.astype(float)
+
+max_values = input.max(axis=0)
+input_data = input/max_values
+
+
+input_size = len(input_data)
+print(np.array(input_data).shape)
+
+output = np.zeros((40,40))
+output_weight = np.random.randint(0,41,size=(40,40,4))
+distance = np.zeros((40,40))
+
+# print(output.shape)
+# print(output_weight)
+min_distance= 100000
+(min_i,min_j) = (-1,-1)
+
+def h(d,sigma):
+  neigbour = np.exp((d**2)/(-2*sigma**2))
+  return neigbour
+
+for epoch in range(10):
+  sigma = sigma0 if epoch==0 else sigma
+  eta = eta0 if epoch==0 else eta
+  for n in range(input_size):
+    for i in range(40):
+      for j in range(40):
+        output[i][j] = np.dot(output_weight[i][j] , input_data[n].transpose())
+    print(output[0][0])
+    
+    for i in range(40):
+      for j in range(40):
+        distance[i][j] = np.linalg.norm(output_weight[i][j]-input_data[n])
+
+    for i in range(40):
+      for j in range(40):
+        if distance[i][j] < min_distance:
+          min_distance = distance[i][j]
+          min_i = i
+          min_j = j
+    print (epoch, n, min_distance)
+  
+    # for i in range(40):
+    #   for j in range(40):
+    #     eucldiean_distance =  
+    #     neighbour = np.exp(np.sqrt((i - min_i)**2 + (j - min_j)**2)/(-2*sigma**2))
+  
+    for i in range(40):
+      for j in range(40):
+        edis= distance[i][j]-distance[min_i][min_j]
+        output_weight[i][j] = output_weight[i][j] + eta*h(edis, sigma)*(input_data[n]-output_weight[i][j])
+        
+        # output_weight[i][j] = output_weight[i][j] + eta*h(i,j,min_i,min_j,sigma)*(input_data[n]-output_weight[i][j])
+    
+  sigma = sigma0* np.exp(-dsigma*epoch)
+  eta = eta0* np.exp(-deta*epoch)
+  
+
+
+print(distance.shape)
+print(min_i,min_j)
+
+
+# neighborhood = np.exp(-((i - bmu_indices[0])**2 + (j - bmu_indices[1])**2) / (2 * sigma**2))
+
+------------------------
+
+    for i in range(40):
+      for j in range(40):
+        # distance[i,j]= np.linalg.norm(final_winner[n]-output[i,j])
+        array=[]
+        array.append(i)
+        array.append(j)
+        array = np.array(array)
+        euclid_d = np.linalg.norm(array,final_winner[n])
